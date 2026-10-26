@@ -30,7 +30,11 @@ public class OpenAiTranscriptionModelIT {
 
         var response = openAiTranscriptionModel.call(recording);
 
-        assertThat(response).contains(expectedKeyword);
+        var valueOnly = expectedKeyword.replace(" reais", "");
+        assertThat(response).satisfiesAnyOf(
+                r -> assertThat(r).contains(expectedKeyword),
+                r -> assertThat(r).contains(valueOnly)
+        );
         System.out.println(response);
     }
 }

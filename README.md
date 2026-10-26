@@ -19,7 +19,7 @@ The track starts with architecture foundations and progressively moves through w
 - [`04-spring-cloud-openfeign`](04-spring-cloud-openfeign/README.md)  
   External service integration (KYC/AML) using Spring Cloud OpenFeign and resilience patterns.
 - [`05-spring-ai`](05-spring-ai/README.md)  
-  Final project using Spring AI for speech-to-text, tool calling, and text-to-speech.
+  **Entrega do Desafio Final: Kojiramen** — Izakaya & AI Restaurant Management Cockpit integrando Spring AI (Tool Calling, ações dinâmicas), frontend interativo React/Vite, dashboard analítico e arquitetura DDD.
 
 ## Recommended Study Order
 

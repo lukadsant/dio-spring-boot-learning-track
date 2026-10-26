@@ -1,0 +1,13 @@
+services:
+  speaches:
+    image: ghcr.io/speaches-ai/speaches:latest-cpu
+    container_name: speaches
+    ports:
+      - "8002:8000"
+    environment:
+      PRELOAD_MODELS: '["Systran/faster-whisper-large-v3-turbo","speaches-ai/Kokoro-82M-v1.0-ONNX"]'
+    volumes:
+      - hf-cache:/home/ubuntu/.cache/huggingface/hub
+
+volumes:
+  hf-cache:

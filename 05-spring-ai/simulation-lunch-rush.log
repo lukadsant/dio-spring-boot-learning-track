@@ -1,0 +1,146 @@
+==============================================================================
+🏮 SIMULAÇÃO DE TURNO DE ALMOÇO — RESTAURANTE IZAKAYA & JIDOUHANBAIKI
+Início da Execução Real: 2026-10-21 21:12:30
+Servidor Alvo: http://localhost:8089
+Modelo de IA: hermes3:8b (Ollama local)
+==============================================================================
+
+==============================================================================
+⏰ [11:30] ETAPA 1: Abertura do Turno & Consulta ao Cardápio
+👤 Ator: 🧑‍🍳 Gerente de Salão | 🛠️ Use Case / Tool: ListRestaurantMenuUseCase
+------------------------------------------------------------------------------
+HTTP Status: 200 (tempo: 0.03s)
+Total de itens no cardápio: 10
+  • [Vitrine 3D] A1  | Matcha Latte Okinawa                | R$ 18.00
+  • [Vitrine 3D] A2  | Sakura Sparkling Soda               | R$ 20.00
+  • [Vitrine 3D] A3  | Yuzu Citrus Milk                    | R$ 22.00
+  • [Vitrine 3D] A4  | Hojicha Cold Brew                   | R$ 24.00
+  • [Vitrine 3D] B1  | Ramune Melon Pop                    | R$ 19.00
+  • [Vitrine 3D] B2  | Ichigo Strawberry Milk              | R$ 21.00
+  • [Cozinha] IZ1 | Tonkotsu Ramen Especial             | R$ 54.00
+  • [Cozinha] IZ2 | Gyoza Artesanal (6 unid.)           | R$ 32.00
+  • [Cozinha] IZ3 | Katsu Sando Wagyu                   | R$ 46.00
+  • [Cozinha] IZ4 | Yakitori Trio Skewers               | R$ 36.00
+
+==============================================================================
+⏰ [11:45] ETAPA 2: Compra Emergencial de Insumos da Cozinha
+👤 Ator: 👨‍🍳 Chefe de Cozinha | 🛠️ Use Case / Tool: PersistTransactionUseCase
+------------------------------------------------------------------------------
+Mensagem enviada à IA: "Comprei 95 reais em peixe fresco no mercado para o almoço"
+HTTP Status: 200 (tempo IA: 20.30s)
+Resposta do Agente: A transação de R$ 95,00 em peixe fresco foi registrada com sucesso na categoria GROCERIAS. O ID desta transação é c38ebd3b-36b3-450c-9296-0bb7c74f3873.
+
+==============================================================================
+⏰ [12:10] ETAPA 3: Chegada e Pedido da Mesa 1
+👤 Ator: 🍜 Cliente na Mesa 1 | 🛠️ Use Case / Tool: CreateRestaurantOrderUseCase
+------------------------------------------------------------------------------
+Mensagem enviada pelo Cliente: "Gostaria de pedir 2 Tonkotsu Ramen Especial e 2 Yuzu Citrus Milk para a nossa mesa"
+HTTP Status: 200 (tempo IA: 2.98s)
+Resposta do Agente: Sua comanda na mesa 1 foi aberta com sucesso. Acesse a lista de pedidos para ver os detalhes:
+- Cardápio completo do restaurante Izakaya e as bebidas da vitrine Jidouhanbaiki
+- 1 Tonkotsu Ramen + 1 Matcha Latte
+- 2 Tonkotsu Ramen Especial + 2 Yuzu Citrus Milk
+
+O valor total é de R$ 324,00. Continue aproveitando seu tempo no restaurante Izakaya!
+
+==============================================================================
+⏰ [12:30] ETAPA 4: Pedido da Mesa 3 (Almoço de Equipe)
+👤 Ator: 🍜 Cliente na Mesa 3 | 🛠️ Use Case / Tool: CreateRestaurantOrderUseCase
+------------------------------------------------------------------------------
+Mensagem enviada: "Para a mesa 3: queremos 3 Katsu Sando Wagyu e 3 Matcha Latte Okinawa"
+HTTP Status: 200 (tempo IA: 2.42s)
+Resposta do Agente: A comanda para a mesa 3 foi aberta com sucesso. Os itens pedidos incluem 2 Tonkotsu Ramen, 2 Matcha Latte + 1 matcha latte e 3 Katsu Sando Wagyu. O valor total da comanda é de R$ 354,00. A comanda está atualmente aberta.
+
+==============================================================================
+⏰ [12:50] ETAPA 5: Garçom Registra Pedido da Mesa 4
+👤 Ator: 🧑‍🍳 Garçom | 🛠️ Use Case / Tool: CreateRestaurantOrderUseCase
+------------------------------------------------------------------------------
+Mensagem do Garçom: "Abrir pedido mesa 4: 2 Gyoza Tradicional e 2 Sakura Sparkling Soda"
+HTTP Status: 200 (tempo IA: 2.39s)
+Resposta do Agente: Sua comanda na mesa 4 foi aberta com sucesso! A seguir estão os detalhes do seu pedido:
+
+- 2 Gyoza Tradicional
+- 2 Sakura Sparkling Soda
+
+O valor total de sua comanda é de R$ 40,00. Agora você pode continuar adicionando itens ou fechar a comanda quando estiver pronto para fazer o pagamento.
+
+==============================================================================
+⏰ [13:10] ETAPA 6: Auditoria de Comandas Abertas no Salão
+👤 Ator: 🧑‍🍳 Gerente de Salão | 🛠️ Use Case / Tool: ListRestaurantOrdersUseCase
+------------------------------------------------------------------------------
+HTTP Status: 200 (tempo: 0.02s)
+Total de comandas abertas no momento de pico: 5
+  • Mesa 4 | Itens: 2 Gyoza Tradicional e 2 Sakura Sparkling Soda | Total: R$ 40.00
+  • Mesa 2 | Itens: 1x Tonkotsu Ramen Especial + 1x Matcha Latte Okinawa (Slot A1) | Total: R$ 72.00
+  • Mesa 5 | Itens: 2x Katsu Sando Wagyu + 2x Sakura Sparkling Soda (Slot A2) | Total: R$ 132.00
+  • Mesa 3 | Itens: 2 Tonkotsu Ramen e 2 Matcha Latte + 1 matcha latte + 3 Katsu Sando Wagyu e 3 Matcha Latte Okinawa | Total: R$ 354.00
+  • Mesa 1 | Itens: Cardápio completo do restaurante Izakaya e as bebidas da vitrine Jidouhanbaiki + 1 Tonkotsu Ramen e 1 Matcha Latte + 2 Tonkotsu Ramen Especial e 2 Yuzu Citrus Milk | Total: R$ 324.00
+
+==============================================================================
+⏰ [13:25] ETAPA 7: Cliente da Mesa 1 Pede Fechamento da Conta
+👤 Ator: 🍜 Cliente na Mesa 1 | 🛠️ Use Case / Tool: CloseTableOrderUseCase
+------------------------------------------------------------------------------
+Pedido de Fechamento: "Por favor, fechar a comanda da mesa 1"
+HTTP Status: 200 (tempo IA: 2.01s)
+Resposta do Agente: A comanda da mesa 1 foi fechada com sucesso e a transação financeira correspondente foi lançada no caixa. O valor total da conta foi de R$ 324,00. Agradeço por ter escolhido o Izakaya e Jidouhanbaiki para sua experiência culinária!
+
+==============================================================================
+⏰ [13:40] ETAPA 8: Reposição de Bebidas da Vitrine Jidouhanbaiki
+👤 Ator: 📦 Estoquista / Caixa | 🛠️ Use Case / Tool: PersistTransactionUseCase
+------------------------------------------------------------------------------
+Instrução: "Comprei 120 reais em latas de refrigerante artesanal e cha para repor a vitrine 3D"
+HTTP Status: 200 (tempo IA: 2.09s)
+Resposta do Agente: A transação de compra de latas de refrigerante artesanal e cha para repor a vitrine 3D foi registrada com sucesso. O valor total da transação foi de R$ 120,00.
+
+==============================================================================
+⏰ [14:05] ETAPA 9: Fechamento das Mesas 3 e 4 no Caixa
+👤 Ator: 🧑‍🍳 Operador de Caixa | 🛠️ Use Case / Tool: CloseTableOrderUseCase
+------------------------------------------------------------------------------
+  ✅ Mesa 3 liquidada com sucesso | Total: R$ 354.00 (lançado em RESTAURANT)
+  ✅ Mesa 4 liquidada com sucesso | Total: R$ 40.00 (lançado em RESTAURANT)
+
+==============================================================================
+⏰ [14:20] ETAPA 10: Auditoria de Entradas e Saídas por Categoria
+👤 Ator: 📊 Auditor Financeiro | 🛠️ Use Case / Tool: ListTransactionsByCategoryUseCase
+------------------------------------------------------------------------------
+Categoria RESTAURANT  :  4 lançamentos | Subtotal: R$ 8.70
+Categoria INGREDIENTS :  0 lançamentos | Subtotal: R$ 0.00
+Categoria BEVERAGES   :  2 lançamentos | Subtotal: R$ 3.05
+
+==============================================================================
+⏰ [14:25] ETAPA 11: Extrato Geral Consolidado
+👤 Ator: 📊 Gerente Geral | 🛠️ Use Case / Tool: ListAllTransactionsUseCase
+------------------------------------------------------------------------------
+HTTP Status: 200 | Total de Lançamentos de Caixa: 9
+  • [BEVERAGES ] R$    1.20 - latas de refrigerante artesanal e cha para repor a vitrine 3D
+  • [RESTAURANT] R$    1.52 - Fechamento Mesa 1 (2x Tonkotsu Ramen + 2x Yuzu Citrus Milk)
+  • [PHARMA    ] R$    0.45 - Kit Primeiros Socorros da Cozinha na Farmácia
+  • [RESTAURANT] R$    0.40 - Fechamento Mesa 4 (2 Gyoza Tradicional e 2 Sakura Sparkling Soda)
+  • [BEVERAGES ] R$    1.85 - Reposição Vitrine Jidouhanbaiki (Matcha Latte & Sakura Soda)
+  • [RESTAURANT] R$    3.54 - Fechamento Mesa 3 (2 Tonkotsu Ramen e 2 Matcha Latte + 1 matcha latte + 3 Katsu Sando Wagyu e 3 Matcha Latte Okinawa)
+  • [GROCERIES ] R$    0.95 - peixe fresco
+  • [GROCERIES ] R$    2.40 - Insumos Asiáticos no Mercado Liberdade (Missô, Nori e Chashu)
+  • [RESTAURANT] R$    3.24 - Fechamento Mesa 1 (Cardápio completo do restaurante Izakaya e as bebidas da vitrine Jidouhanbaiki + 1 Tonkotsu Ramen e 1 Matcha Latte + 2 Tonkotsu Ramen Especial e 2 Yuzu Citrus Milk)
+
+==============================================================================
+⏰ [14:30] ETAPA 12: Relatório de Fechamento do Turno de Almoço
+👤 Ator: 🧑‍🍳 Gerente Geral | 🛠️ Use Case / Tool: SummarizeTransactionsUseCase
+------------------------------------------------------------------------------
+HTTP Status: 200 (tempo: 0.01s)
+
+==============================================================================
+📈 BALANÇO FINANCEIRO FINAL DO TURNO DE ALMOÇO
+==============================================================================
+Total Movimentado no Caixa: R$ 1555.00
+Quantidade de Lançamentos:   9
+Distribuição por Categoria:
+  • BEVERAGES      : R$ 305.00
+  • RESTAURANT     : R$ 870.00
+  • PHARMA         : R$ 45.00
+  • GROCERIES      : R$ 335.00
+------------------------------------------------------------------------------
+💵 Faturamento de Vendas (Almoço): R$ 870.00
+🛒 Custos Operacionais (Insumos):   R$ 305.00
+⭐ Lucro Operacional do Almoço:     R$ 565.00
+==============================================================================
+Simulação finalizada com sucesso em: 2026-10-21 21:13:02

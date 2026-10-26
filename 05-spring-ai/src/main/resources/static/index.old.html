@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Izakaya & Jidouhanbaiki AI — Restaurante Inteligente</title>
+<style>
+  :root {
+    --red: #c0392b;
+    --red-glow: #e74c3c;
+    --ink: #1a1a1d;
+    --paper: #f4ede2;
+    --card: #ffffff;
+    --mut: #68645e;
+    --accent: #2e7d32;
+    --gold: #d4a373;
+    --blue: #2980b9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--paper); color: var(--ink); }
+
+  header {
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  header h1 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; }
+  header h1 span { color: #ff6b5b; }
+
+  .role-toggle {
+    display: flex;
+    background: #2b2b30;
+    padding: 3px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+  .role-btn {
+    background: transparent;
+    border: 0;
+    color: #bbb;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .role-btn.active {
+    background: var(--red);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(192, 57, 43, 0.4);
+  }
+
+  .table-selector-bar {
+    background: #fff3e0;
+    border-bottom: 1px solid #ffe0b2;
+    padding: 8px 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #e65100;
+  }
+  .table-selector-bar.show { display: flex; }
+  .table-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #ffcc80;
+    cursor: pointer;
+    color: #5d4037;
+  }
+  .table-pill.active {
+    background: #e65100;
+    color: #fff;
+    border-color: #e65100;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1300px;
+    margin: auto;
+  }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  h2 { margin: 0 0 10px; font-size: 1rem; color: #333; display: flex; justify-content: space-between; align-items: center; }
+
+  #log {
+    height: 340px;
+    overflow-y: auto;
+    background: #fbf9f5;
+    border: 1px solid #eee8df;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.92rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .msg {
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 88%;
+    white-space: pre-wrap;
+    line-height: 1.4;
+    word-break: break-word;
+    position: relative;
+  }
+  .user {
+    background: #ffe8e5;
+    color: #5c1e19;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+  }
+  .bot {
+    background: #fff;
+    color: #222;
+    border: 1px solid #e8e2d5;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .msg-meta {
+    font-size: 0.72rem;
+    color: var(--mut);
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .play-btn {
+    background: #eef2f7;
+    border: 0;
+    color: var(--blue);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .chip {
+    background: #eee8de;
+    color: #444;
+    border: 0;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .chip:hover { background: #ded4c3; }
+
+  .chat-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .input-row { display: flex; gap: 8px; align-items: center; }
+  input[type=text], select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #dcd5ca;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    background: #fff;
+  }
+  input[type=text]:focus, select:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  button.main-btn {
+    background: var(--red);
+    color: #fff;
+    border: 0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  button.main-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* Botão de gravação de áudio real */
+  #rec-btn {
+    background: #f0ebe1;
+    color: #333;
+    border: 1px solid #dcd5ca;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+  #rec-btn.recording {
+    background: #c0392b;
+    color: #fff;
+    border-color: #962d22;
+    animation: pulse 1.2s infinite;
+  }
+  #cancel-rec {
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #666;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: none;
+  }
+  #cancel-rec.show { display: inline-block; }
+
+  @keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(192, 57, 43, 0); }
+  }
+
+  .recording-banner {
+    background: #ffebee;
+    color: #c62828;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .recording-banner.show { display: flex; }
+
+  /* Painel direito */
+  .right { display: flex; flex-direction: column; gap: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid #eee; }
+  .tag { font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; font-weight: 600; }
+  .OPEN { background: #d4f5dc; color: #1e7e34; }
+  .CLOSED { background: #e0e0e0; color: #616161; }
+  .stat { font-size: 1.5rem; font-weight: 700; color: #2e7d32; }
+  .mut { color: var(--mut); font-size: 0.8rem; }
+  .jidou-badge {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏮 Izakaya <span>&</span> Jidouhanbaiki AI</h1>
+  <div class="role-toggle">
+    <button class="role-btn active" id="btn-staff">🧑‍🍳 Garçom / Gestão</button>
+    <button class="role-btn" id="btn-customer">🍜 Cliente na Mesa</button>
+  </div>
+  <div><span id="ai-status" class="mut" style="color:#aaa">verificando IA...</span></div>
+</header>
+
+<div class="table-selector-bar" id="table-bar">
+  <span>🍽️ Sua Mesa Atual:</span>
+  <div class="table-pill active" data-table="1">Mesa 1</div>
+  <div class="table-pill" data-table="2">Mesa 2</div>
+  <div class="table-pill" data-table="3">Mesa 3</div>
+  <div class="table-pill" data-table="4">Mesa 4</div>
+</div>
+
+<main>
+  <!-- Coluna do Chat / Voz -->
+  <section>
+    <h2>
+      <span id="assistant-title">Assistente Izakaya</span>
+      <select id="model-select" style="max-width: 160px; padding: 4px 8px; font-size: 0.8rem;"></select>
+    </h2>
+
+    <div id="log"></div>
+
+    <div class="recording-banner" id="rec-banner">
+      <span>🔴 Gravando áudio pelo microfone... Fale com o assistente</span>
+      <span id="rec-timer">0:00</span>
+    </div>
+
+    <div class="chips" id="chips"></div>
+
+    <div class="chat-controls">
+      <div class="input-row">
+        <input type="text" id="msg-input" placeholder="Digite uma mensagem ou comanda...">
+        <button id="rec-btn" title="Gravar voz pelo microfone">🎤 <span id="rec-btn-text">Falar</span></button>
+        <button id="cancel-rec" title="Cancelar gravação">✖</button>
+        <button class="main-btn" id="send-btn">Enviar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coluna da Direita (Dados / Contexto) -->
+  <div class="right">
+    <!-- Seção de Caixa (só visível para Staff) -->
+    <section id="section-cashier">
+      <h2>Caixa do Izakaya</h2>
+      <div class="stat" id="total-cash">R$ 0,00</div>
+      <div class="mut" id="count-trans">0 lançamentos</div>
+      <table id="table-categories" style="margin-top: 8px;"></table>
+    </section>
+
+    <!-- Comandas das Mesas -->
+    <section id="section-orders">
+      <h2 id="orders-title">Comandas das Mesas</h2>
+      <table id="table-orders"></table>
+    </section>
+
+    <!-- Cardápio e Vitrine 3D -->
+    <section id="section-menu">
+      <h2>Cardápio Izakaya & Vitrine Jidouhanbaiki</h2>
+      <table id="table-menu"></table>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const brl = v => 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let currentRole = 'STAFF'; // 'STAFF' | 'CUSTOMER'
+let selectedTable = 1;
+let mediaRecorder = null;
+let audioChunks = [];
+let recInterval = null;
+let recSeconds = 0;
+
+const staffChips = [
+  'Abrir pedido mesa 3: 2 Tonkotsu Ramen e 2 Matcha Latte',
+  'Fechar a conta da mesa 3',
+  'Gastei 85 reais em insumos no mercado',
+  'Qual o resumo financeiro por categoria?',
+  'Mostre o cardápio'
+];
+
+const customerChips = [
+  'Quero pedir 1 Tonkotsu Ramen e 1 Matcha Latte',
+  'O que é o Yuzu Citrus Milk?',
+  'Quais bebidas estão disponíveis na vitrine 3D?',
+  'Pode fechar a minha comanda por favor?'
+];
+
+function addMessage(text, cls, meta = {}) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.textContent = text;
+
+  if (meta.transcript) {
+    const micTag = document.createElement('div');
+    micTag.style.fontSize = '0.75rem';
+    micTag.style.color = '#a04030';
+    micTag.textContent = '🎤 Áudio: "' + meta.transcript + '"';
+    d.prepend(micTag);
+  }
+
+  if (meta.audioBase64) {
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'msg-meta';
+    metaDiv.innerHTML = `<span>🔊 Resposta falada (${meta.duration || 'Kokoro TTS'})</span>`;
+    const playBtn = document.createElement('button');
+    playBtn.className = 'play-btn';
+    playBtn.textContent = '▶ Ouvir';
+    playBtn.onclick = () => playAudio(meta.audioBase64);
+    metaDiv.appendChild(playBtn);
+    d.appendChild(metaDiv);
+  }
+
+  $('log').appendChild(d);
+  $('log').scrollTop = $('log').scrollHeight;
+  return d;
+}
+
+function playAudio(base64) {
+  try {
+    const audio = new Audio("data:audio/mp3;base64," + base64);
+    audio.play();
+  } catch (e) {
+    console.error("Erro ao tocar áudio:", e);
+  }
+}
+
+// Alternar Perfil
+function setRole(role) {
+  currentRole = role;
+  if (role === 'STAFF') {
+    $('btn-staff').classList.add('active');
+    $('btn-customer').classList.remove('active');
+    $('table-bar').classList.remove('show');
+    $('section-cashier').style.display = 'block';
+    $('orders-title').textContent = 'Comandas das Mesas';
+    $('assistant-title').textContent = 'Assistente de Gestão (Izakaya)';
+    renderChips(staffChips);
+  } else {
+    $('btn-customer').classList.add('active');
+    $('btn-staff').classList.remove('active');
+    $('table-bar').classList.add('show');
+    $('section-cashier').style.display = 'none';
+    $('orders-title').textContent = `Sua Comanda (Mesa ${selectedTable})`;
+    $('assistant-title').textContent = `Cardápio & Pedidos (Mesa ${selectedTable})`;
+    renderChips(customerChips);
+  }
+  refresh();
+}
+
+function renderChips(list) {
+  $('chips').innerHTML = list.map(s => `<button class="chip">${esc(s)}</button>`).join('');
+}
+
+// Envio de Texto
+async function sendText(text) {
+  text = (text ?? $('msg-input').value).trim();
+  if (!text) return;
+  $('msg-input').value = '';
+
+  addMessage(text, 'user');
+  const wait = addMessage('Pensando...', 'bot');
+  const t0 = performance.now();
+
+  try {
+    const res = await fetch('/api/restaurant/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        model: $('model-select').value,
+        role: currentRole,
+        tableNumber: selectedTable
+      })
+    });
+    const data = await res.json();
+    const duration = ((performance.now() - t0) / 1000).toFixed(1) + 's';
+    wait.textContent = data.reply || data.error || 'Erro sem resposta';
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = `${duration} · ${data.model || ''}`;
+    wait.appendChild(meta);
+  } catch (e) {
+    wait.textContent = 'Falha ao comunicar com o assistente: ' + e;
+  }
+  refresh();
+}
+
+// Gravação de Áudio Real (MediaRecorder)
+async function toggleRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording(true); // parar e enviar
+    return;
+  }
+  startRecording();
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    
+    // Escolher mimetype suportado
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recInterval);
+      resetRecUI();
+
+      if (audioChunks.length === 0 || mediaRecorder.cancelled) return;
+
+      const audioBlob = new Blob(audioChunks, { type: mimeType });
+      await sendAudio(audioBlob);
+    };
+
+    mediaRecorder.start();
+    recSeconds = 0;
+    $('rec-btn').classList.add('recording');
+    $('rec-btn-text').textContent = 'Parar e Enviar';
+    $('cancel-rec').classList.add('show');
+    $('rec-banner').classList.add('show');
+    $('rec-timer').textContent = '0:00';
+
+    recInterval = setInterval(() => {
+      recSeconds++;
+      const m = Math.floor(recSeconds / 60);
+      const s = recSeconds % 60;
+      $('rec-timer').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+      if (recSeconds >= 25) { // limite máximo de 25s
+        stopRecording(true);
+      }
+    }, 1000);
+
+  } catch (err) {
+    alert('Permissão de microfone negada ou indisponível: ' + err.message);
+  }
+}
+
+function stopRecording(send = true) {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.cancelled = !send;
+    mediaRecorder.stop();
+  }
+}
+
+function resetRecUI() {
+  $('rec-btn').classList.remove('recording');
+  $('rec-btn-text').textContent = 'Falar';
+  $('cancel-rec').classList.remove('show');
+  $('rec-banner').classList.remove('show');
+}
+
+// Enviar Áudio Gravado ao Backend Local
+async function sendAudio(blob) {
+  const waitUser = addMessage('Enviando gravação de áudio...', 'user');
+  const waitBot = addMessage('Processando áudio com Faster-Whisper local...', 'bot');
+  const t0 = performance.now();
+
+  const formData = new FormData();
+  formData.append('file', blob, 'recording.webm');
+  formData.append('model', $('model-select').value);
+  formData.append('role', currentRole);
+  if (currentRole === 'CUSTOMER') {
+    formData.append('tableNumber', selectedTable);
+  }
+
+  try {
+    const res = await fetch('/api/restaurant/chat-audio', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    const duration = ((performance.now() - t0) / 1000).toFixed(1) + 's';
+
+    // Atualizar balão do usuário com a transcrição real
+    waitUser.textContent = data.transcript || '(áudio processado)';
+    const tag = document.createElement('div');
+    tag.style.fontSize = '0.72rem';
+    tag.style.color = '#8e2820';
+    tag.textContent = '🎤 Transcrição Faster-Whisper local';
+    waitUser.prepend(tag);
+
+    // Atualizar balão da resposta do bot com áudio sintetizado
+    waitBot.textContent = data.reply || data.error || 'Erro na resposta';
+    if (data.audioBase64) {
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'msg-meta';
+      metaDiv.innerHTML = `<span>🔊 Resposta falada (${duration} · ${data.model || ''})</span>`;
+      const playBtn = document.createElement('button');
+      playBtn.className = 'play-btn';
+      playBtn.textContent = '▶ Ouvir';
+      playBtn.onclick = () => playAudio(data.audioBase64);
+      metaDiv.appendChild(playBtn);
+      waitBot.appendChild(metaDiv);
+
+      // Reproduzir áudio imediatamente
+      playAudio(data.audioBase64);
+    }
+  } catch (err) {
+    waitBot.textContent = 'Erro ao processar áudio: ' + err;
+  }
+  refresh();
+}
+
+// Atualizar Dados das Tabelas
+async function refresh() {
+  try {
+    const [summary, orders, menu] = await Promise.all([
+      fetch('/api/restaurant/summary').then(r => r.json()),
+      fetch('/api/restaurant/orders').then(r => r.json()),
+      fetch('/api/restaurant/menu').then(r => r.json())
+    ]);
+
+    // Atualizar Caixa
+    $('total-cash').textContent = brl(summary.totalAmountReais);
+    $('count-trans').textContent = summary.totalTransactions + ' lançamentos registrados';
+    $('table-categories').innerHTML = Object.entries(summary.totalsByCategoryReais)
+      .map(([k, v]) => `<tr><td>${esc(k)}</td><td style="font-weight:600">${brl(v)}</td></tr>`)
+      .join('');
+
+    // Atualizar Comandas
+    let displayOrders = orders;
+    if (currentRole === 'CUSTOMER') {
+      displayOrders = orders.filter(o => Number(o.tableNumber) === Number(selectedTable));
+    }
+
+    if (displayOrders.length === 0) {
+      $('table-orders').innerHTML = `<tr><td colspan="4" class="mut" style="padding:12px; text-align:center;">Nenhuma comanda para a Mesa ${selectedTable} no momento.</td></tr>`;
+    } else {
+      $('table-orders').innerHTML = displayOrders.map(x => `
+        <tr>
+          <td><strong>Mesa ${x.tableNumber}</strong></td>
+          <td>${esc(x.itemsDescription)}</td>
+          <td style="font-weight:600">${brl(x.totalAmountReais)}</td>
+          <td><span class="tag ${x.status}">${x.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Atualizar Cardápio (destacando pratos e bebidas Jidouhanbaiki)
+    $('table-menu').innerHTML = menu.map(x => `
+      <tr>
+        <td>${x.code.startsWith('A') || x.code.startsWith('B') ? `<span class="jidou-badge">${esc(x.code)}</span>` : `<strong>${esc(x.code)}</strong>`}</td>
+        <td>${esc(x.name)}</td>
+        <td class="mut">${esc(x.packagingOrStyle)}</td>
+        <td style="font-weight:600">${brl(x.priceReais ?? x.priceCents/100)}</td>
+      </tr>
+    `).join('');
+
+  } catch (e) {
+    console.error('Erro ao atualizar dados:', e);
+  }
+}
+
+// Inicialização
+(async () => {
+  // Carregar status da IA e modelos
+  try {
+    const st = await fetch('/api/restaurant/ai-status').then(r => r.json());
+    $('model-select').innerHTML = st.models.map(x => `<option ${x === st.defaultModel ? 'selected' : ''}>${esc(x)}</option>`).join('');
+    $('ai-status').textContent = 'Ollama local: ' + st.defaultModel;
+  } catch {
+    $('ai-status').textContent = 'API offline';
+  }
+
+  // Eventos de Perfil
+  $('btn-staff').onclick = () => setRole('STAFF');
+  $('btn-customer').onclick = () => setRole('CUSTOMER');
+
+  // Eventos de Seleção de Mesa
+  document.querySelectorAll('.table-pill').forEach(pill => {
+    pill.onclick = () => {
+      document.querySelectorAll('.table-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      selectedTable = Number(pill.getAttribute('data-table'));
+      $('orders-title').textContent = `Sua Comanda (Mesa ${selectedTable})`;
+      $('assistant-title').textContent = `Cardápio & Pedidos (Mesa ${selectedTable})`;
+      refresh();
+    };
+  });
+
+  // Chips
+  $('chips').onclick = e => {
+    if (e.target.tagName === 'BUTTON') sendText(e.target.textContent);
+  };
+
+  // Botões de envio e gravação
+  $('send-btn').onclick = () => sendText();
+  $('msg-input').onkeydown = e => { if (e.key === 'Enter') sendText(); };
+  $('rec-btn').onclick = toggleRecording;
+  $('cancel-rec').onclick = () => stopRecording(false);
+
+  // Iniciar como STAFF
+  setRole('STAFF');
+  addMessage('Olá! Sou o assistente inteligente do Izakaya integrado à vitrine 3D Jidouhanbaiki. Você pode digitar ou usar o microfone para falar comigo.', 'bot');
+  refresh();
+})();
+</script>
+</body>
+</html>
