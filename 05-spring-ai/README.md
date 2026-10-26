@@ -1,3 +1,5 @@
+
+
 # DIO Spring Boot - Final Project 05: Spring AI (budgeting)
 
 ## Introduction
@@ -87,6 +89,12 @@ Run the application and tests:
 ---
 
 ## 🏆 Entrega do Desafio Final: Kojiramen — Izakaya & AI Restaurant Management Cockpit
+
+<img width="1506" height="767" alt="Captura de tela 2026-10-25 233007" src="https://github.com/user-attachments/assets/0cb97eb3-3356-4c51-8cf8-457cc16cc809" />
+<img width="1519" height="778" alt="Captura de tela 2026-10-25 233111" src="https://github.com/user-attachments/assets/136fcd75-6c55-482e-a19f-3c909ac6b5a6" />
+<img width="350" height="523" alt="Captura de tela 2026-10-25 233243" src="https://github.com/user-attachments/assets/44f2d15e-16d4-4c14-a370-6d6a9f831b3e" />
+
+
 
 ### 🍜 O que o projeto faz
 
